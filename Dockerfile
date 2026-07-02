@@ -1,3 +1,22 @@
+# =========================
+# Build CSS và JavaScript
+# =========================
+FROM node:22-alpine AS frontend
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+
+# =========================
+# Chạy Laravel bằng Apache
+# =========================
 FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
@@ -23,22 +42,33 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY . /var/www/html
+COPY . .
 
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Sao chép các file Vite đã build
+COPY --from=frontend /app/public/build /var/www/html/public/build
 
-RUN chown -R www-data:www-data /var/www/html/storage \
-    /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage \
-    /var/www/html/bootstrap/cache
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader
+
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 RUN sed -i \
     's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' \
     /etc/apache2/sites-available/000-default.conf
 
 RUN printf '<Directory /var/www/html/public>\n\
-AllowOverride All\n\
-Require all granted\n\
+    AllowOverride All\n\
+    Require all granted\n\
 </Directory>\n' >> /etc/apache2/apache2.conf
 
 EXPOSE 80

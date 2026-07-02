@@ -1,22 +1,16 @@
-# =========================
-# Build CSS và JavaScript
-# =========================
+# Build CSS và JavaScript bằng Vite
 FROM node:22-alpine AS frontend
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-
 RUN npm ci
 
 COPY . .
-
 RUN npm run build
 
 
-# =========================
 # Chạy Laravel bằng Apache
-# =========================
 FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
@@ -44,7 +38,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Sao chép các file Vite đã build
+# Sao chép CSS/JS đã build
 COPY --from=frontend /app/public/build /var/www/html/public/build
 
 RUN composer install \

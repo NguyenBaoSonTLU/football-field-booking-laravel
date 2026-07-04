@@ -1,7 +1,0 @@
-@extends('layouts.app')
-
-@section('title', 'Đổi mật khẩu')
-
-@section('content')
-<section class="pp-section pt-4"><div class="container"><div class="row g-4"><aside class="col-lg-3"><div class="pp-card p-3 profile-sidebar"><nav class="nav flex-column"><a class="nav-link" href="{{ route('profile.edit') }}">👤 Hồ sơ</a><a class="nav-link active" href="{{ route('profile.password') }}">🔒 Bảo mật</a><a class="nav-link" href="{{ route('notifications.index') }}">🔔 Thông báo</a></nav></div></aside><div class="col-lg-9"><h1 class="pp-section-title">Đổi mật khẩu</h1><p class="text-muted">Sử dụng mật khẩu mạnh và không chia sẻ với người khác.</p><form class="pp-card p-4 p-lg-5" method="POST" action="{{ route('profile.password.update') }}">@csrf @method('PUT')<div class="mb-3"><label class="form-label" for="current_password">Mật khẩu hiện tại</label><input class="form-control" type="password" id="current_password" name="current_password" required autocomplete="current-password"></div><div class="mb-3"><label class="form-label" for="password">Mật khẩu mới</label><input class="form-control" type="password" id="password" name="password" required autocomplete="new-password"></div><div class="mb-4"><label class="form-label" for="password_confirmation">Xác nhận mật khẩu mới</label><input class="form-control" type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"></div><button class="btn btn-pp" type="submit">Cập nhật mật khẩu</button></form></div></div></div></section>
-@endsection

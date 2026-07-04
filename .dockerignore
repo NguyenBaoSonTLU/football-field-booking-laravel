@@ -1,0 +1,8 @@
+.git
+.gitignore
+.env
+node_modules
+vendor
+/public/storage
+/public/storage_old
+/storage/logs/*
